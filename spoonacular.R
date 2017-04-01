@@ -4,8 +4,8 @@
 # httr is a library in R with tools for working with URLs and HTTP. (install.packages('httr'))
 library(httr)
 # the base URL for getting recipies IDs from a search query, here just looking for one hundred fish type meals
-url <- c('https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search?query=fish&number=100&type=main+course')
-# get the reponse from Spoonacular using your MASHKEY
+url <- c('https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search?query=vegetarian&number=100&type=main+course')
+# get the reponse from Spoonacular using your MASHKEY 
 resp <- GET(url, add_headers("X-Mashape-Key" = "YcOLNx4wu1mshRPWRyEydtl0BqRzp1HCuoljsnq04qkqz51rCe", "Accept" = "application/json"))
 # the number of recipies received, the maximum you can request is 100
 n <- length(content(resp)$results)
@@ -17,7 +17,7 @@ for (i in c(1:n)) {
   recipe[[i]] <- GET(url, add_headers("X-Mashape-Key" = "YcOLNx4wu1mshRPWRyEydtl0BqRzp1HCuoljsnq04qkqz51rCe", "Accept" = "application/json")) # get recipe
 }
 # Save your data for future analysis, we don't want to request the same stuff more than once
-save(file=c("fishdata.Rdata"), list=c("resp", "recipe"))
+save(file=c("vegandata.Rdata"), list=c("resp", "recipe"))
 # Extract needed information from the json string, Spoonacular will give you these things:
 # "vegetarian"               "vegan"                    "glutenFree"               "dairyFree"               
 # "veryHealthy"              "cheap"                    "veryPopular"              "sustainable"             
@@ -79,25 +79,25 @@ allnutrients <- sort(unique(allnutrients))
 allingredience <- sort(unique(allingredience))
 
 # Now put this all into an AMPL dat file called "spoonacular.dat":
-cat("set dish := ", as.character(ID), file="spoonacular.dat",sep=" ",append=FALSE)
-cat(";\n\n",file="spoonacular.dat",sep="",append=TRUE)
+cat("set dish := ", as.character(ID), file="spoonacularVegetarian.dat",sep=" ",append=FALSE)
+cat(";\n\n",file="spoonacularVegetarian.dat",sep="",append=TRUE)
 
-cat("param dishname := ", file="spoonacular.dat",sep="\n",append=TRUE)
+cat("param dishname := ", file="spoonacularVegetarian.dat",sep="\n",append=TRUE)
 for (i in c(1:n)) {
-  cat(as.character(ID[i]), " \"", title[i], "\"", file="spoonacular.dat",sep="",append=TRUE)
-  cat("\n",file="spoonacular.dat",sep="",append=TRUE)
+  cat(as.character(ID[i]), " \"", title[i], "\"", file="spoonacularVegetarian.dat",sep="",append=TRUE)
+  cat("\n",file="spoonacularVegetarian.dat",sep="",append=TRUE)
 }
-cat(";\n\n",file="spoonacular.dat",sep="",append=TRUE)
+cat(";\n\n",file="spoonacularVegetarian.dat",sep="",append=TRUE)
 
-cat("set nutrient := ", allnutrients, file="spoonacular.dat",sep=" ",append=TRUE)
-cat(";\n\n",file="spoonacular.dat",sep="",append=TRUE)
+cat("set nutrient := ", allnutrients, file="spoonacularVegetarian.dat",sep=" ",append=TRUE)
+cat(";\n\n",file="spoonacularVegetarian.dat",sep="",append=TRUE)
 
-cat("set ingredient := ", allingredience, file="spoonacular.dat",sep=" ",append=TRUE)
-cat(";\n\n",file="spoonacular.dat",sep="",append=TRUE)
+cat("set ingredient := ", allingredience, file="spoonacularVegetarian.dat",sep=" ",append=TRUE)
+cat(";\n\n",file="spoonacularVegetarian.dat",sep="",append=TRUE)
 
 nutrients_recipe <- matrix(rep(n*length(allnutrients),0), nrow = n)
 nutrients_recipe <- as.data.frame(nutrients_recipe,col.names<-sort(allnutrients))
-cat("param dishnutrient := ",file="spoonacular.dat",sep="\n",append=TRUE)
+cat("param dishnutrient := ",file="spoonacularVegetarian.dat",sep="\n",append=TRUE)
 for (i in c(1:n)) {
   for (j in allnutrients) {
     nutrients_recipe[i,j] <- sum(nutrients_amount[[i]][which(j==nutrients_name[[i]])])
@@ -105,15 +105,15 @@ for (i in c(1:n)) {
       print(nutrients_unit[[i]][which(j==nutrients_name[[i]])])
     }
     if (nutrients_recipe[i,j] > 0) {
-      cat(as.character(ID[i]),j,as.character(nutrients_recipe[i,j]),file="spoonacular.dat",sep=" ",append=TRUE)
-      cat("\n",file="spoonacular.dat",sep="",append=TRUE)
+      cat(as.character(ID[i]),j,as.character(nutrients_recipe[i,j]),file="spoonacularVegetarian.dat",sep=" ",append=TRUE)
+      cat("\n",file="spoonacularVegetarian.dat",sep="",append=TRUE)
     }
   }
 }
-cat(";\n\n",file="spoonacular.dat",sep="",append=TRUE)
+cat(";\n\n",file="spoonacularVegetarian.dat",sep="",append=TRUE)
 ingredience_recipe <- matrix(rep(n*length(allingredience),0), nrow = n)
 ingredience_recipe <- as.data.frame(ingredience_recipe,col.names<-sort(allingredience))
-cat("param dishingredient := ",file="spoonacular.dat",sep="\n",append=TRUE)
+cat("param dishingredient := ",file="spoonacularVegetarian.dat",sep="\n",append=TRUE)
 for (i in c(1:n)) {
   for (j in allingredience) {
     ingredience_recipe[i,j] <- sum(amount[[i]][which(j==ingredience[[i]])])
@@ -121,33 +121,33 @@ for (i in c(1:n)) {
       print(unit[[i]][which(j==unit[[i]])])
     }
     if (ingredience_recipe[i,j]>0) {
-      cat(as.character(ID[i]),j,ingredience_recipe[i,j],file="spoonacular.dat",sep=" ",append=TRUE)
-      cat("\n",file="spoonacular.dat",sep="",append=TRUE)
+      cat(as.character(ID[i]),j,ingredience_recipe[i,j],file="spoonacularVegetarian.dat",sep=" ",append=TRUE)
+      cat("\n",file="spoonacularVegetarian.dat",sep="",append=TRUE)
     }
   }
 }
-cat(";\n\n",file="spoonacular.dat",sep="",append=TRUE)
+cat(";\n\n",file="spoonacularVegetarian.dat",sep="",append=TRUE)
 
 # Popularity of the dish
-cat("param aggregateLikes := ",file="spoonacular.dat",sep="\n",append=TRUE)
+cat("param aggregateLikes := ",file="spoonacularVegetarian.dat",sep="\n",append=TRUE)
 for (i in c(1:n)) {
-  cat(as.character(ID[i]),aggregateLikes[i],file="spoonacular.dat",sep=" ",append=TRUE)
-  cat("\n",file="spoonacular.dat",sep="",append=TRUE)
+  cat(as.character(ID[i]),aggregateLikes[i],file="spoonacularVegetarian.dat",sep=" ",append=TRUE)
+  cat("\n",file="spoonacularVegetarian.dat",sep="",append=TRUE)
 }
-cat(";\n\n",file="spoonacular.dat",sep="",append=TRUE)
+cat(";\n\n",file="spoonacularVegetarian.dat",sep="",append=TRUE)
 
 # The price of a dish
-cat("param pricePerServing := ",file="spoonacular.dat",sep="\n",append=TRUE)
+cat("param pricePerServing := ",file="spoonacularVegetarian.dat",sep="\n",append=TRUE)
 for (i in c(1:n)) {
-  cat(as.character(ID[i]),pricePerServing[i],file="spoonacular.dat",sep=" ",append=TRUE)
-  cat("\n",file="spoonacular.dat",sep="",append=TRUE)
+  cat(as.character(ID[i]),pricePerServing[i],file="spoonacularVegetarian.dat",sep=" ",append=TRUE)
+  cat("\n",file="spoonacularVegetarian.dat",sep="",append=TRUE)
 }
-cat(";\n\n",file="spoonacular.dat",sep="",append=TRUE)
+cat(";\n\n",file="spoonacularVegetarian.dat",sep="",append=TRUE)
 
 # The time taken to make the dish
-cat("param readyInMinutes := ",file="spoonacular.dat",sep="\n",append=TRUE)
+cat("param readyInMinutes := ",file="spoonacularVegetarian.dat",sep="\n",append=TRUE)
 for (i in c(1:n)) {
-  cat(as.character(ID[i]),readyInMinutes[i],file="spoonacular.dat",sep=" ",append=TRUE)
-  cat("\n",file="spoonacular.dat",sep="",append=TRUE)
+  cat(as.character(ID[i]),readyInMinutes[i],file="spoonacularVegetarian.dat",sep=" ",append=TRUE)
+  cat("\n",file="spoonacularVegetarian.dat",sep="",append=TRUE)
 }
-cat(";\n\n",file="spoonacular.dat",sep="",append=TRUE)
+cat(";\n\n",file="spoonacularVegetarian.dat",sep="",append=TRUE)
