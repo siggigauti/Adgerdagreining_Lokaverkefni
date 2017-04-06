@@ -4,7 +4,7 @@
 # httr is a library in R with tools for working with URLs and HTTP. (install.packages('httr'))
 library(httr)
 # the base URL for getting recipies IDs from a search query, here just looking for one hundred fish type meals
-url <- c('https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search?query=vegetarian&number=100&type=main+course')
+url <- c('https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search?query=meat&number=100&type=main+course')
 # get the reponse from Spoonacular using your MASHKEY 
 resp <- GET(url, add_headers("X-Mashape-Key" = "YcOLNx4wu1mshRPWRyEydtl0BqRzp1HCuoljsnq04qkqz51rCe", "Accept" = "application/json"))
 # the number of recipies received, the maximum you can request is 100
