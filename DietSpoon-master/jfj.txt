@@ -1,0 +1,13 @@
+set soupdish := setof{d in dish: typedish[d] == 0} d;
+set proteindish := setof{d in dish: typedish[d] == 1} d;
+set saladdish := setof{d in dish: typedish[d] == 2} d;
+
+
+
+:=
+71827 0
+74636 1
+51526 0
+
+
+subject to bla: sum{d in soupdish} >= 1;
