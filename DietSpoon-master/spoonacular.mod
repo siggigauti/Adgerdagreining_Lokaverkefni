@@ -3,7 +3,7 @@
 
 # The set of dishes
 set dish;
-param dishname symbolic;
+param dishname{dish} symbolic;
 
 # The set of ingredience
 set ingredient;
